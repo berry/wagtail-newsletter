@@ -199,7 +199,6 @@ class MailrelayCampaignBackend(CampaignBackend):
                 )
                 campaign_id = str(response["id"])
             else:
-                response = self._request_json("POST", "/campaigns", json=body)
                 response = self._request_json(
                     "POST",
                     "/campaigns",
