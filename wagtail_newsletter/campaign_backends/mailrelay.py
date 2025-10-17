@@ -207,7 +207,14 @@ class MailrelayCampaignBackend(CampaignBackend):
                 )
                 campaign_id = str(response["id"])
         except MailrelayApiError as error:
-            raise CampaignBackendError(str(error)) from error
+            if (
+                error.status_code in {200, 201, 202, 204}
+                and isinstance(error.payload, dict)
+                and error.payload.get("id")
+            ):
+                campaign_id = str(error.payload["id"])
+            else:
+                raise CampaignBackendError(str(error)) from error
 
         return self._combine_campaign_identifier(campaign_id, sent_id)
 
@@ -302,7 +309,13 @@ class MailrelayCampaignBackend(CampaignBackend):
         json: Optional[dict[str, Any]] = None,
         expected_status: set[int] | None = None,
     ) -> requests.Response:
-        expected = expected_status or {200}
+        if expected_status is None:
+            expected = {200, 201, 202, 204}
+        else:
+            expected = set(expected_status)
+            # Mailrelay returns 201 for creates and 204 for actions; accept other 2xx as well
+            if not expected.intersection({201, 202, 204}):
+                expected |= {code for code in (201, 202, 204) if 200 <= code < 300}
         relative_path = path.lstrip("/")
         url = f"{self.base_url}/{relative_path}"
         try:
@@ -316,7 +329,9 @@ class MailrelayCampaignBackend(CampaignBackend):
         except requests.RequestException as exc:  # pragma: no cover - network failure
             raise CampaignBackendError("Unable to communicate with Mailrelay") from exc
 
-        if response.status_code in expected:
+        if response.status_code in expected or (
+            expected_status is not None and 200 <= response.status_code < 300
+        ):
             return response
 
         payload: Any
