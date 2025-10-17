@@ -120,13 +120,7 @@ def test_get_audience_segments_error(mailrelay_settings):
 
 
 def test_save_campaign_creates(mailrelay_settings):
-    backend = make_backend(
-        mailrelay_settings,
-        [
-            make_response({"id": 55}),
-            make_response({"id": 55}, status=201),
-        ],
-    )
+    backend = make_backend(mailrelay_settings, [make_response({"id": 55}, status=201)])
     recipients = cast(Any, SimpleNamespace(audience="12", segment=None))
 
     campaign_id = backend.save_campaign(
@@ -137,8 +131,8 @@ def test_save_campaign_creates(mailrelay_settings):
 
     assert campaign_id == "55"
     session = cast(FakeSession, backend.session)
-    assert len(session.calls) == 2
-    call = session.calls[-1]
+    assert len(session.calls) == 1
+    call = session.calls[0]
     assert call["method"] == "POST"
     assert call["url"].endswith("/api/v1/campaigns")
     assert call["json"] == {
