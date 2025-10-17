@@ -1360,6 +1360,7 @@ dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "pytest-django" },
+    { name = "requests" },
     { name = "sphinx", version = "8.1.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "sphinx", version = "8.2.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "sphinx-autobuild" },
@@ -1410,7 +1411,7 @@ requires-dist = [
     { name = "sphinx-autobuild", marker = "extra == 'docs'" },
     { name = "sphinx-wagtail-theme", marker = "extra == 'docs'" },
     { name = "wagtail", specifier = ">=6.3" },
-    { name = "wagtail-newsletter", extras = ["testing", "docs", "mailchimp", "mrml"], marker = "extra == 'dev'" },
+    { name = "wagtail-newsletter", extras = ["testing", "docs", "mailchimp", "mailrelay", "mrml"], marker = "extra == 'dev'" },
 ]
 provides-extras = ["dev", "docs", "mailchimp", "mailrelay", "mrml", "testing"]
 

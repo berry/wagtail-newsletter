@@ -60,7 +60,7 @@ mrml = [
     "mrml>=0.2",
 ]
 dev = [
-    "wagtail-newsletter[testing,docs,mailchimp,mrml]",
+    "wagtail-newsletter[testing,docs,mailchimp,mailrelay,mrml]",
     "psycopg",
     "flit",
 ]

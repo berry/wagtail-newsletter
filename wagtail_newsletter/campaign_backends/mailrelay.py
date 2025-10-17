@@ -195,10 +195,17 @@ class MailrelayCampaignBackend(CampaignBackend):
                     "PATCH",
                     f"/campaigns/{base_id}",
                     json=body,
+                    expected_status={200},
                 )
                 campaign_id = str(response["id"])
             else:
                 response = self._request_json("POST", "/campaigns", json=body)
+                response = self._request_json(
+                    "POST",
+                    "/campaigns",
+                    json=body,
+                    expected_status={201},
+                )
                 campaign_id = str(response["id"])
         except MailrelayApiError as error:
             raise CampaignBackendError(str(error)) from error
