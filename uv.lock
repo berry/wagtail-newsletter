@@ -1374,6 +1374,9 @@ docs = [
 mailchimp = [
     { name = "mailchimp-marketing" },
 ]
+mailrelay = [
+    { name = "requests" },
+]
 mrml = [
     { name = "mrml" },
 ]
@@ -1402,13 +1405,14 @@ requires-dist = [
     { name = "pytest-cov", marker = "extra == 'testing'" },
     { name = "pytest-django", marker = "extra == 'testing'" },
     { name = "queryish", specifier = ">=0.2" },
+    { name = "requests", marker = "extra == 'mailrelay'", specifier = ">=2.31" },
     { name = "sphinx", marker = "extra == 'docs'" },
     { name = "sphinx-autobuild", marker = "extra == 'docs'" },
     { name = "sphinx-wagtail-theme", marker = "extra == 'docs'" },
     { name = "wagtail", specifier = ">=6.3" },
     { name = "wagtail-newsletter", extras = ["testing", "docs", "mailchimp", "mrml"], marker = "extra == 'dev'" },
 ]
-provides-extras = ["dev", "docs", "mailchimp", "mrml", "testing"]
+provides-extras = ["dev", "docs", "mailchimp", "mailrelay", "mrml", "testing"]
 
 [[package]]
 name = "watchfiles"

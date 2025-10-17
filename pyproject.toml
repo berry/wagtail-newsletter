@@ -53,6 +53,9 @@ docs = [
 mailchimp = [
     "mailchimp-marketing>=3.0.80",
 ]
+mailrelay = [
+    "requests>=2.31",
+]
 mrml = [
     "mrml>=0.2",
 ]
