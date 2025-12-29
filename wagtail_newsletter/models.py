@@ -1,9 +1,11 @@
 from typing import Any, Optional
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+from django.utils.module_loading import import_string
 from django.utils.safestring import SafeString
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
@@ -88,8 +90,18 @@ class NewsletterPageMixin(Page):
         abstract = True
 
     @classmethod
-    def get_newsletter_panels(cls):
+    def get_recipients_chooser_viewset(cls):
+        chooser_path = getattr(
+            settings, "WAGTAIL_NEWSLETTER_RECIPIENTS_CHOOSER_VIEWSET", None
+        )
+        if chooser_path:
+            return import_string(chooser_path)
         from .viewsets import recipients_chooser_viewset
+        return recipients_chooser_viewset
+
+    @classmethod
+    def get_newsletter_panels(cls):
+        recipients_chooser_viewset = cls.get_recipients_chooser_viewset()
 
         return [
             FieldPanel(
@@ -154,7 +166,8 @@ class NewsletterPageMixin(Page):
         return self.newsletter_template
 
     def get_newsletter_context(self) -> "dict[str, Any]":
-        return {"page": self}
+        base_url = getattr(settings, "WAGTAILADMIN_BASE_URL", "").rstrip("/")
+        return {"page": self, "base_url": base_url}
 
     def get_newsletter_html(self, extra_context=None) -> SafeString:
         context = {
